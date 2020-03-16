@@ -1,0 +1,17 @@
+---
+- name: Create NAT gateway 
+  ec2_vpc_nat_gateway:
+    subnet_id: "{{ item }}"
+    region: "{{ aws_region }}"
+    wait: yes
+    if_exist_do_not_create: yes
+  register: nat_gateway_ids
+  loop:
+    - "{{ vpc_subnet_ids['private_1_challenge-7_test'] }}"
+    - "{{ vpc_subnet_ids['private_2_challenge-7_test'] }}"
+
+- name: Set NAT GW ids
+  set_fact:
+    nat_gw_ids: "{{ nat_gw_ids | default({}) | combine({ item.item: item.nat_gateway_id }) }}"
+  loop: "{{ nat_gateway_ids.results }}"
+...

@@ -1,0 +1,38 @@
+---
+# AWS variables
+aws_region: us-east-2
+
+# VPC Information
+vpc_name: challenge-7
+vpc_cidr_block: 10.0.0.0/16
+
+# Subnets
+vpc_subnets:
+  - private-a:
+    cidr: 10.0.1.0/24
+    az: "{{ aws_region }}a"
+    name: "private_1"
+  - public-a:
+    cidr: 10.0.2.0/24
+    az: "{{ aws_region }}a"
+    name: "public_1"
+  - private-b:
+    cidr: 10.0.3.0/24
+    az: "{{ aws_region }}b"
+    name: "private_2"
+  - public-b:
+    cidr: 10.0.4.0/24
+    az: "{{ aws_region }}b"
+    name: "public_2"
+
+# AMI id
+## The following AMIs are available in us-east-2 (Ohio)
+jenkins_ami: "ami-09b9fa859c1d3fe33" ## Bitnami public AMI - Debian 9 x86_64
+amazon_linux_ami: "ami-0e01ce4ee18447327" ## x86_64 Free tier eligible with SSD volume
+
+# Tags info
+tag_app_name: challenge-7
+tag_env: test
+tag_owner: "Juan D. Arcila-Moreno"
+tag_email: "jdarcilam@gmail.com"
+...

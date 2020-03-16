@@ -1,0 +1,13 @@
+---
+- name: Create an EKS cluster
+  aws_eks_cluster:
+    name: 7_challenge
+    version: v1.14.0
+    role_arn: my_eks_role
+    subnets:
+      - "{{ id_from_list }}"
+    security_groups:
+      - 
+      - sg-abcd1234
+  register: eks_creation
+...

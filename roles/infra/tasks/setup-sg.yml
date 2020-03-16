@@ -1,0 +1,48 @@
+---
+- name: Create External SSH Access (Security Group)
+  ec2_group:
+    name: "External SSH Access"
+    description: "External SSH Access"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    rules:
+      - proto: "tcp"
+        from_port: "22"
+        to_port: "22"
+        cidr_ip: "0.0.0.0/0"
+    tags:
+      Name: "sg_ssh_{{ vpc_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+  register: this_sg_ssh
+
+- name: Create Web Access (Security Group)
+  ec2_group:
+    name: "External Web Access"
+    description: "External Web Access"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    rules:
+      - proto: "tcp"
+        from_port: "80"
+        to_port: "80"
+        cidr_ip: "0.0.0.0/0"
+      - proto: "tcp"
+        from_port: "443"
+        to_port: "443"
+        cidr_ip: "0.0.0.0/0"
+    tags:
+      Name: "sg_web_{{ vpc_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+  register: this_sg_web
+
+- name: Set SG IDs
+  set_fact:
+    ssh_sg_ext_id: "{{ this_sg_ssh.group_id }}"
+    web_sg_ext_id: "{{ this_sg_web.group_id }}"
+...

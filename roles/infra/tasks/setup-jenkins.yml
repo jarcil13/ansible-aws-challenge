@@ -1,0 +1,20 @@
+---
+- name: Create EC2 instance with jenkins AMI
+  ec2_instance:
+    name: "jenkins-instance"
+    key_name: "{{ ec2_key_result.key.name }}"
+    vpc_subnet_id: "{{ vpc_subnet_ids['public_1_challenge-7_test'] }}"
+    instance_type: t2.micro
+    security_groups:
+      - "{{ ssh_sg_ext_id  }}"
+      - "{{ web_sg_ext_id }}"
+    network:
+      assign_public_ip: true
+    image_id: "{{ jenkins_ami }}"
+    tags:
+      Name: "jenkins_{{ tag_env }}_public_1"
+      Application: "jenkins"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+...

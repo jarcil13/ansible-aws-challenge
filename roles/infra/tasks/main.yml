@@ -1,0 +1,12 @@
+---
+- include: setup-vpc.yml
+- include: setup-subnets.yml
+- include: setup-igw.yml
+- include: setup-nat.yml
+- include: setup-rtb.yml
+- include: setup-sg.yml
+- include: setup-key.yml
+- include: setup-bastion.yml
+- include: setup-jenkins.yml
+#- include: setup-eks.yml
+...

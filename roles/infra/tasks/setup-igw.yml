@@ -1,0 +1,18 @@
+---
+- name: Create Internet Gateway for VPC
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    state: present
+    tags:
+      Name: "igw_{{ vpc_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+  register: this_igw
+
+- name: Set Internet Gateway ID in variable
+  set_fact:
+    igw_id: "{{ this_igw.gateway_id }}"
+...

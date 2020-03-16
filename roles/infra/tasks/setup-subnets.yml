@@ -1,0 +1,22 @@
+---
+- name: Create necessary subnets (Two privates and Two publics)
+  ec2_vpc_subnet:
+    vpc_id: "{{ vpc_id }}"
+    cidr: "{{ item.cidr }}"
+    az: "{{ item.az }}"
+    region: "{{ aws_region }}"
+    state: present
+    tags:
+      Name: "{{ item.name }}_{{ vpc_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+  loop: "{{ vpc_subnets }}"
+  register: subnet_ids
+
+- name: Set Subnet IDs
+  set_fact:
+    vpc_subnet_ids: "{{ vpc_subnet_ids | default({}) | combine({ item.subnet.tags.Name: item.subnet.id }) }}"
+  loop: "{{ subnet_ids.results }}"
+...

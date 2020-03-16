@@ -1,0 +1,18 @@
+---
+- name: Create bastion EC2 instance
+  ec2_instance:
+    name: "bastion-instance"
+    key_name: "{{ ec2_key_result.key.name }}"
+    vpc_subnet_id: "{{ vpc_subnet_ids['public_1_challenge-7_test'] }}"
+    instance_type: t2.micro
+    security_group: "{{ ssh_sg_ext_id  }}"
+    network:
+      assign_public_ip: true
+    image_id: "{{ amazon_linux_ami }}"
+    tags:
+      Name: "bastion_{{ tag_env }}_public_1"
+      Application: "bastion"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+...

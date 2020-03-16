@@ -1,0 +1,50 @@
+---
+- name: Set up public subnet route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    tags:
+      Name: "public_{{ vpc_name }}_{{ tag_app_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+    subnets:
+      - "{{ vpc_subnet_ids['public_1_challenge-7_test'] }}"
+      - "{{ vpc_subnet_ids['public_2_challenge-7_test'] }}"
+    routes:
+      - dest: "0.0.0.0/0"
+        gateway_id: "{{ igw_id }}"
+
+- name: Set up private 1 subnet route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    tags:
+      Name: "private_1_{{ vpc_name }}_{{ tag_app_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+    subnets:
+      - "{{ vpc_subnet_ids['private_1_challenge-7_test'] }}"
+    routes:
+      - dest: "0.0.0.0/0"
+        gateway_id: "{{ nat_gw_ids[vpc_subnet_ids['private_1_challenge-7_test']] }}"
+
+- name: Set up private 2 subnet route table
+  ec2_vpc_route_table:
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    tags:
+      Name: "private_2_{{ vpc_name }}_{{ tag_app_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+    subnets:
+      - "{{ vpc_subnet_ids['private_2_challenge-7_test'] }}"
+    routes:
+      - dest: "0.0.0.0/0"
+        gateway_id: "{{ nat_gw_ids[vpc_subnet_ids['private_2_challenge-7_test']] }}"
+...

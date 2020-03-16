@@ -1,0 +1,20 @@
+---
+# VPC
+- name: Create VPC
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr_block }}"
+    region: "{{ aws_region }}"
+    state: present
+    tags:
+      Name: "{{ vpc_name }}_{{ tag_app_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+  register: this_vpc
+
+- name: Set VPC ID in variable
+  set_fact:
+    vpc_id: "{{ this_vpc.vpc.id }}"
+...
