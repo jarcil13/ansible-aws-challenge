@@ -9,12 +9,13 @@ This repository contains an ansible deployment for the following architecture
 - boto3
 
 # Assumptions
-AWS credentias must be configured in the e
+AWS credentials must be configured in the environment.
 
 # Execution
-Go to repo root directory
+- Go to repo root directory
+
 `$ cd ansible-aws-challenge`
-execute main playbook
+- Execute main playbook
 `$ ansible-playbook infra.yml`
 
 # TO-DOs
