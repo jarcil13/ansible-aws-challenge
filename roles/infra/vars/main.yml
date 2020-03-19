@@ -7,23 +7,32 @@ vpc_name: challenge-7
 vpc_cidr_block: 10.0.0.0/16
 
 # Subnets
-vpc_subnets:
+vpc_subnets_private:
   - private-a:
     cidr: 10.0.1.0/24
     az: "{{ aws_region }}a"
     name: "private_1"
-  - public-a:
-    cidr: 10.0.2.0/24
-    az: "{{ aws_region }}a"
-    name: "public_1"
   - private-b:
     cidr: 10.0.3.0/24
     az: "{{ aws_region }}b"
     name: "private_2"
+
+vpc_subnets_public:    
+  - public-a:
+    cidr: 10.0.2.0/24
+    az: "{{ aws_region }}a"
+    name: "public_1"
   - public-b:
     cidr: 10.0.4.0/24
     az: "{{ aws_region }}b"
     name: "public_2"
+
+# EKS
+eks_cluster_name: challenge-7-cluster
+eks_kubernetes_version: 1.15
+eks_nodegroup_name: challenge-7-eksnodes
+eks_nodegroup_cluster_size: 2
+eks_nodegroup_instance_type: t3.micro
 
 # AMI id
 ## The following AMIs are available in us-east-2 (Ohio)

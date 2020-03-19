@@ -41,8 +41,23 @@
       Email: "{{ tag_email }}"
   register: this_sg_web
 
+- name: Create SSH Access to Working Nodes (Security Group)
+  ec2_group:
+    name: "Working Nodes Access"
+    description: "Allow SSH access to worker nodes from instances that belong to this group"
+    vpc_id: "{{ vpc_id }}"
+    region: "{{ aws_region }}"
+    tags:
+      Name: "sg_ngaccess_{{ vpc_name }}_{{ tag_env }}"
+      Application: "{{ tag_app_name }}"
+      Environment: "{{ tag_env }}"
+      Owner: "{{ tag_owner }}"
+      Email: "{{ tag_email }}"
+  register: this_sg_ngaccess
+
 - name: Set SG IDs
   set_fact:
     ssh_sg_ext_id: "{{ this_sg_ssh.group_id }}"
     web_sg_ext_id: "{{ this_sg_web.group_id }}"
+    nodegroup_sg_ext_id: "{{ this_sg_ngaccess.group_id }}"
 ...

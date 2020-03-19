@@ -1,5 +1,5 @@
 ---
-- name: Create necessary subnets (Two privates and Two publics)
+- name: Create necessary subnets (Two privates)
   ec2_vpc_subnet:
     vpc_id: "{{ vpc_id }}"
     cidr: "{{ item.cidr }}"
@@ -7,16 +7,47 @@
     region: "{{ aws_region }}"
     state: present
     tags:
+      kubernetes.io/cluster/challenge-7-cluster: shared ### TODO- Make it dynamic
+      kubernetes.io/role/internal-elb: 1
       Name: "{{ item.name }}_{{ vpc_name }}_{{ tag_env }}"
       Application: "{{ tag_app_name }}"
       Environment: "{{ tag_env }}"
       Owner: "{{ tag_owner }}"
       Email: "{{ tag_email }}"
-  loop: "{{ vpc_subnets }}"
-  register: subnet_ids
+  loop: "{{ vpc_subnets_private }}"
+  register: subnet_ids_private
 
-- name: Set Subnet IDs
+- name: Create necessary subnets (Two publics)
+  ec2_vpc_subnet:
+      vpc_id: "{{ vpc_id }}"
+      cidr: "{{ item.cidr }}"
+      az: "{{ item.az }}"
+      region: "{{ aws_region }}"
+      state: present
+      tags:
+        kubernetes.io/cluster/challenge-7-cluster: shared ### TODO- Make it dynamic
+        kubernetes.io/role/elb: 1
+        Name: "{{ item.name }}_{{ vpc_name }}_{{ tag_env }}"
+        Application: "{{ tag_app_name }}"
+        Environment: "{{ tag_env }}"
+        Owner: "{{ tag_owner }}"
+        Email: "{{ tag_email }}"
+  loop: "{{ vpc_subnets_public }}"
+  register: subnet_ids_public
+  
+- name: Set Private Subnet IDs
   set_fact:
-    vpc_subnet_ids: "{{ vpc_subnet_ids | default({}) | combine({ item.subnet.tags.Name: item.subnet.id }) }}"
-  loop: "{{ subnet_ids.results }}"
+    vpc_subnet_ids_private: "{{ vpc_subnet_ids_private | default({}) | combine({ item.subnet.tags.Name: item.subnet.id }) }}"
+  loop: "{{ subnet_ids_private.results }}"
+
+- name: Set Public Subnet IDs
+  set_fact:
+    vpc_subnet_ids_public: "{{ vpc_subnet_ids_public | default({}) | combine({ item.subnet.tags.Name: item.subnet.id }) }}"
+  loop: "{{ subnet_ids_public.results }}"
+
+- debug:
+   var: vpc_subnet_ids_private
+
+- debug:
+   var: vpc_subnet_ids_public
 ...

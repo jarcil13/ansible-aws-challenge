@@ -8,5 +8,5 @@
 - include: setup-key.yml
 - include: setup-bastion.yml
 - include: setup-jenkins.yml
-#- include: setup-eks.yml
+- include: setup-eks.yml
 ...

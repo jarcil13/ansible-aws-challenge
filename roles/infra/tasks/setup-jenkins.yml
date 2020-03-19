@@ -3,7 +3,7 @@
   ec2_instance:
     name: "jenkins-instance"
     key_name: "{{ ec2_key_result.key.name }}"
-    vpc_subnet_id: "{{ vpc_subnet_ids['public_1_challenge-7_test'] }}"
+    vpc_subnet_id: "{{ vpc_subnet_ids_public['public_1_challenge-7_test'] }}"
     instance_type: t2.micro
     security_groups:
       - "{{ ssh_sg_ext_id  }}"

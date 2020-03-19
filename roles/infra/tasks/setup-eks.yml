@@ -1,13 +1,59 @@
 ---
-- name: Create an EKS cluster
-  aws_eks_cluster:
-    name: 7_challenge
-    version: v1.14.0
-    role_arn: my_eks_role
-    subnets:
-      - "{{ id_from_list }}"
-    security_groups:
-      - 
-      - sg-abcd1234
-  register: eks_creation
+- name: Create list of subnets ids
+  set_fact:
+    private_subnets_list:
+     - "{{vpc_subnet_ids_private['private_1_challenge-7_test']}}"
+     - "{{vpc_subnet_ids_private['private_2_challenge-7_test']}}"
+    subnets_list:
+     - "{{vpc_subnet_ids_private['private_1_challenge-7_test']}}"
+     - "{{vpc_subnet_ids_private['private_2_challenge-7_test']}}"
+     - "{{vpc_subnet_ids_public['public_1_challenge-7_test']}}"
+     - "{{vpc_subnet_ids_public['public_2_challenge-7_test']}}"
+ 
+- name: Create EKS Cluster exists via CloudFormation
+  cloudformation:
+    stack_name: "stack-{{eks_cluster_name}}"
+    state: present
+    disable_rollback: false
+    template: /home/juand/work/ansible-aws-challenge/roles/infra/files/eks-cluster.yml
+    template_parameters:
+      ClusterName: "{{ eks_cluster_name }}"
+      KubernetesVersion: "{{ eks_kubernetes_version }}"
+      Subnets: "{{ subnets_list | join(',') }}" 
+      VpcId: "{{ vpc_id }}"
+    tags:
+       Stack: "eks-{{eks_cluster_name}}"
+       Application: "eks-cluster"
+       Environment: "{{ tag_env }}"
+       Owner: "{{ tag_owner }}"
+       Email: "{{ tag_email }}"
+  register: eks_cluster_info
+
+- debug:
+   var: eks_cluster_info
+
+- name: Create EKS Node Group exists via CloudFormation.
+  cloudformation:
+    stack_name: "stack-{{eks_nodegroup_name}}"
+    state: present
+    disable_rollback: false
+    template: /home/juand/work/ansible-aws-challenge/roles/infra/files/eks-nodegroup.yml
+    template_parameters:
+      ClusterName: "{{ eks_cluster_name }}"
+      NodeGroupName: "{{ eks_nodegroup_name }}"
+      NodeGroupDesiredCapacity: "{{ eks_nodegroup_cluster_size }}"
+      NodeInstanceType: "{{ eks_nodegroup_instance_type }}"
+      Subnets: "{{ private_subnets_list | join(',') }}" 
+      AccessKey: "{{ ec2_key_result.key.name }}"
+      SecurityGroupNodes: "{{ nodegroup_sg_ext_id }}"
+    tags:
+       Stack: "eks-{{eks_cluster_name}}"
+       Application: "eks-nodegroup"
+       Environment: "{{ tag_env }}"
+       Owner: "{{ tag_owner }}"
+       Email: "{{ tag_email }}"
+  register: eks_nodegroup_info
+
+- debug:
+   var: eks_nodegroup_info
 ...

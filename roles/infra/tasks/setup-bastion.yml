@@ -3,9 +3,11 @@
   ec2_instance:
     name: "bastion-instance"
     key_name: "{{ ec2_key_result.key.name }}"
-    vpc_subnet_id: "{{ vpc_subnet_ids['public_1_challenge-7_test'] }}"
+    vpc_subnet_id: "{{ vpc_subnet_ids_public['public_1_challenge-7_test'] }}"
     instance_type: t2.micro
-    security_group: "{{ ssh_sg_ext_id  }}"
+    security_groups: 
+      - "{{ ssh_sg_ext_id  }}"
+      - "{{ nodegroup_sg_ext_id }}"
     network:
       assign_public_ip: true
     image_id: "{{ amazon_linux_ami }}"
