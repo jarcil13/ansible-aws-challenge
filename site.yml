@@ -1,0 +1,4 @@
+---
+- import_playbook: playbooks/infra.yml
+- import_playbook: playbooks/provision.yml
+...

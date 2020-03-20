@@ -1,0 +1,46 @@
+---
+- name: Read deployment definition file and appling to cluster
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: "hello-deployment"
+        namespace: "default"
+      spec:
+        selector:
+          matchLabels:
+            app: "hello"
+        replicas: 2
+        template:
+          metadata:
+            labels:
+              app: "hello"
+          spec:
+            containers:
+            - image: "{{ ecr_image_path }}"
+              imagePullPolicy: Always
+              name: "hello"
+              ports:
+              - containerPort: 80
+
+- name: Read service definition file and appling to cluster
+  k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig_path }}"
+    definition:
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: "hello-service"
+        namespace: "default"
+      spec:
+        type: LoadBalancer
+        ports:
+          - port: 80
+            targetPort: 80
+            protocol: TCP
+        selector:
+          app: "hello"

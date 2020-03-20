@@ -1,0 +1,10 @@
+---
+- name: Delete previous kubernetes configuration file, if exits
+  file:
+    path: "{{ kubeconfig_path }}"
+    state: absent
+
+## This task is using env credentials to autenticate aws-cli
+- name: Create kubeconfig file with AWS CLI
+  shell:  | 
+    aws eks update-kubeconfig --name {{ eks_cluster_name }} --kubeconfig {{ kubeconfig_path }}
