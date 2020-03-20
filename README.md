@@ -27,7 +27,7 @@ This repository contains an ansible deployment for the following architecture
 
 Manual configuration include: 
 
-For Jenkins: 
+*For Jenkins:*
 
 - Install Github plugin
 - Install AWS-CLI plugin
@@ -48,12 +48,12 @@ For Jenkins:
 
         stage('Push image'){
             docker.withRegistry('https://<account_id>.dkr.ecr.<region>.amazonaws.com', 'ecr:<<region>:<id_credentisas_jenins>') {
-                docker.image('<accunt_id>.dkr.ecr.<region>.amazonaws.com/<repo_name>').push('latest')
+                docker.image('<account_id>.dkr.ecr.<region>.amazonaws.com/<repo_name>').push('latest')
             }
         }
         
         stage('Deploy image to cluster'){
-        sh "kubectl set image deployment/hello-deployment hello=hello:latest --record --kubeconfig=$JENKINS_HOME/.kube/config.json " 
+        sh "kubectl set image deployment/hello-deployment hello=<account_id>.dkr.ecr.<region>.amazonaws.com/challenge-7:latest --record --kubeconfig=$JENKINS_HOME/.kube/config.json " 
         }
     
     }
@@ -61,7 +61,7 @@ For Jenkins:
       
    - Configure repository hook on Github.
 
-On the Jenkins instance:
+*On the Jenkins instance:*
 - Install docker on the instance
 - Configure docker for jenkins user
 - Install packeges: botocore , boto3
